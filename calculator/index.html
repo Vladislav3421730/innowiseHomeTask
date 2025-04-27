@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Expense Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        table, th, td {
+            border: 1px solid #aaa;
+            border-collapse: collapse;
+            padding: 8px;
+        }
+        table {
+            width: 60%;
+            margin-bottom: 20px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 5px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 8px 15px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Expense Calculator</h2>
+
+<table id="expenseTable">
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>Amount ($)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Groceries</td>
+            <td>15000</td>
+        </tr>
+        <tr>
+            <td>Rent</td>
+            <td>40000</td>
+        </tr>
+        <tr>
+            <td>Transportation</td>
+            <td>5000</td>
+        </tr>
+        <tr>
+            <td>Entertainment</td>
+            <td>10000</td>
+        </tr>
+        <tr>
+            <td>Communication</td>
+            <td>2000</td>
+        </tr>
+        <tr>
+            <td>Gym</td>
+            <td>3000</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Add New Expense</h3>
+<input type="text" id="categoryInput" placeholder="Category">
+<input type="number" id="amountInput" placeholder="Amount ($)">
+<button onclick="addExpense()">Add</button>
+
+<br><br>
+<button onclick="calculateExpenses()">Calculate</button>
+
+<div class="result" id="results"></div>
+
+<script>
+function addExpense() {
+    const category = document.getElementById('categoryInput').value.trim();
+    const amount = parseFloat(document.getElementById('amountInput').value.trim());
+
+    if (category && !isNaN(amount) && amount > 0) {
+        const table = document.getElementById('expenseTable').getElementsByTagName('tbody')[0];
+        const newRow = table.insertRow();
+        const cell1 = newRow.insertCell(0);
+        const cell2 = newRow.insertCell(1);
+        cell1.textContent = category;
+        cell2.textContent = amount;
+
+        document.getElementById('categoryInput').value = '';
+        document.getElementById('amountInput').value = '';
+    } else {
+        alert('Please enter a valid category and amount.');
+    }
+}
+
+function calculateExpenses() {
+    const rows = document.getElementById('expenseTable').getElementsByTagName('tbody')[0].rows;
+    let expenses = [];
+
+    for (let i = 0; i < rows.length; i++) {
+        const category = rows[i].cells[0].textContent;
+        const amount = parseFloat(rows[i].cells[1].textContent);
+        expenses.push({ category, amount });
+    }
+
+    const total = expenses.reduce((sum, item) => sum + item.amount, 0);
+    const avgDaily = (total / 30).toFixed(2);
+
+    const top3 = expenses
+        .sort((a, b) => b.amount - a.amount)
+        .slice(0, 3)
+        .map(item => `${item.category} (${item.amount}$)`)
+        .join(', ');
+
+    document.getElementById('results').innerHTML = `
+        <strong>Total Expenses:</strong> ${total} $<br>
+        <strong>Average Daily Expense:</strong> ${avgDaily} $<br>
+        <strong>Top 3 Expenses:</strong> ${top3}
+    `;
+}
+</script>
+
+</body>
+</html>
